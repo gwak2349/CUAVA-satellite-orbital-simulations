@@ -21,12 +21,10 @@ def eci_to_ecef(t_0,t_sec,x,y,z):
         r3 = [0,0,1]
         eci_to_ecef = np.array([r1,r2,r3])
         vector = np.array([x[t],y[t],z[t]])
-        # print(len(x))
-        # p_ecef = np.matmul(eci_to_ecef,vector)
-        # p_ecef = np.matmul(vector,eci_to_ecef)
-        p_ecef = [r1[0]*x[t]+r1[1]*y[t]+r1[2]*z[t],
-                  r2[0]*x[t]+r2[1]*y[t]+r2[2]*z[t],
-                  r3[0]*x[t]+r3[1]*y[t]+r3[2]*z[t]]
+        p_ecef = np.matmul(eci_to_ecef,vector)
+        # p_ecef = [r1[0]*x[t]+r1[1]*y[t]+r1[2]*z[t],
+        #           r2[0]*x[t]+r2[1]*y[t]+r2[2]*z[t],
+        #           r3[0]*x[t]+r3[1]*y[t]+r3[2]*z[t]]
         # print(p_ecef)
         x2 = p_ecef[0]
         x_ecef.append(x2)
@@ -52,8 +50,8 @@ def eci_to_ecef(t_0,t_sec,x,y,z):
             alpha.append(alpha_i)
 
         # position_ecef.append(p_ecef)
-    for k in range(len(angle_list)):
-        angle_list[k] = angle_list[k]*180/np.pi
+    # for k in range(len(angle_list)):
+    #     angle_list[k] = angle_list[k]*180/np.pi
 
 
     # for k in range(len(alpha)):
@@ -62,13 +60,13 @@ def eci_to_ecef(t_0,t_sec,x,y,z):
     
     return x_ecef, y_ecef, z_ecef, r, alpha, delta 
 
-def convert_radec_to_longlat(alpha, delta):
+# def convert_radec_to_longlat(alpha, delta):
 
-    sidereal_time = alpha
+#     sidereal_time = alpha
 
 
-#hour + minute/60 + second/3600 = decimal value
-    longitude = 1
-    latitude = delta
+# #hour + minute/60 + second/3600 = decimal value
+#     longitude = 1
+#     latitude = delta
 
-    return longitude, latitude
+#     return longitude, latitude

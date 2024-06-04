@@ -6,10 +6,14 @@ import j2
 import ecef
 import newton_method as nm
 import orbitalTransforms as ot
-from sgp4.api import Satrec
-from sgp4.api import jday
-
+# from sgp4.api import Satrec
+# from sgp4.api import jday
 import matplotlib.pyplot as plt
+
+
+
+#Update on code: every time I change a time input into the code, the azimuth and altitude would not change in an ordered manner (i.e. by changing it by 1 second, it would go from 60 degrees to 54 degrees to 78 degrees, for example). Turns out, I had coded the sidereal time incorrectly and forgot to convert the inputs of the sinusoidal functions to radians. The code is much better now, changes in an expected manner, but the azimuth and elevation are still off, though elevation is off by about 9 degrees, basically azimuth is more of a concern since it is about 110 degrees apart.
+
 def read_tle(filename):
     txt = open(filename, "r") #opening the TLE text file
     contents = txt.read() #reading the TLE text file
@@ -85,15 +89,13 @@ def read_tle(filename):
     return tle_elements
 
 
-latitude = -33.887936
-longitude = 151.187088
+latitude = -33.91667222
+longitude = 151.033325
 
 
-# latitude = -52.6242
-# longitude = 28.7203
 
 R = 6371e3
-altitude = 421e3
+altitude = 391e3
 position = R+altitude
 
 filename = 'iss_tle.txt'
@@ -104,9 +106,9 @@ tle_elements = read_tle(filename)
 R_e = 6778e3
 epoch_time = tle_elements[2]
 year = 2024
-month = 5
-day = 27
-UT = 6+24/60+00/3600
+month = 6
+day = 4
+UTC = 11+8/60+0/3600
 
 G = 6.67*10**(-11) #Gravitational constant
 M = 5.97*10**24 #mass of the earth
@@ -119,35 +121,35 @@ e = float(tle_elements[11])
 argp = float(tle_elements[12])
 
 mt = 2*np.pi/T #initial mean motion
-t0 = UT*3600
-t1 = UT*3600+1
+t0 = UTC*3600
+# t1 = UTC*3600+1
 
-ma = mt*t1 #initial mean anomaly
+ma = mt*t0 #initial mean anomaly
 
-t_sec = np.linspace(t1,t1,1)
+t_sec = np.linspace(t0,t0,1)
 a = position
 v = np.sqrt(mu/a)
 h = a*v
 
-raan_i, argp_i, x_j, y_j, z_j = j2.j2_on_orbit(R, i, argp, raan, 0, t1, T,mt,h,mu,e,a,t1, t_sec)
+raan_i, argp_i, x_j, y_j, z_j = j2.j2_on_orbit(R, i, argp, raan, 0, t0, T,mt,h,mu,e,a,t0, t_sec)
 print(x_j, y_j, z_j)
 
-s = '1 25544U 98067A   24148.06162966  .00017600  00000-0  30994-3 0  9997'
-t = '2 25544  51.6402  60.0268 0005600 240.0999 134.8837 15.50510323455278'
-satellite = Satrec.twoline2rv(s,t)
+# s = '1 25544U 98067A   24148.06162966  .00017600  00000-0  30994-3 0  9997'
+# t = '2 25544  51.6402  60.0268 0005600 240.0999 134.8837 15.50510323455278'
+# satellite = Satrec.twoline2rv(s,t)
 
-jd, fr = jday(2024, 5, 30, 20, 23, 25)
-e, r, v = satellite.sgp4(jd,fr) 
+# jd, fr = jday(2024, 5, 30, 20, 23, 25)
+# e, r, v = satellite.sgp4(jd,fr) 
 
-x_j = [r[0]]
-y_j = [r[1]]
-z_j = [r[2]]
-print(x_j, y_j, z_j)
+# x_j = [r[0]]
+# y_j = [r[1]]
+# z_j = [r[2]]
+# print(x_j, y_j, z_j)
 
 x_ecef, y_ecef, z_ecef, r, alpha, delta = ecef.eci_to_ecef(t0, t_sec, x_j, y_j, z_j)    
 
-print(alpha)
-print(delta)
+# print(alpha)
+# print(delta)
 
 
 
@@ -157,7 +159,7 @@ print(delta)
 # delta = np.linspace(-90*np.pi/180,90*np.pi/180,2000)
 
 
-sidereal_time = th.calculate_sidereal_time(year, month, day, UT, longitude)
+sidereal_time = th.calculate_sidereal_time(year, month, day, UTC, longitude)
 azimuth_list = []
 elevation_list = []
 

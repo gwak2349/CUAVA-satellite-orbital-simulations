@@ -7,19 +7,26 @@ def calculate_sidereal_time(y, m, d, UT, longitude):
     T0 = (J0-2451545)/36525
     theta_G_0 = 100.4606184+36000.77004*T0 + 0.000387933*T0**2 - 2.583*(1e-8)*T0**3
     
-    t1 = math.floor(theta_G_0/360)
-    theta = theta_G_0-t1*360
-    theta_G = theta + 360.98564724*UT/24
-    sidereal_time = theta_G*3600 + longitude
-    if sidereal_time > 360:
-        sidereal_time = sidereal_time - 360
+    if theta_G_0 > 360:
+        t1 = math.floor(theta_G_0/360)
+        theta = theta_G_0-t1*360
+    else:
+        theta = theta_G_0
     
+    theta_G = theta + 360.98564724*UT/24
+    sidereal_time = theta_G + longitude
+    if sidereal_time > 360:
+        t2 = math.floor(sidereal_time/360)
+        sidereal_time = sidereal_time - t2*360
+    else:
+        sidereal_time = sidereal_time
    
     return sidereal_time
 
 def geocentric_to_topocentric(alpha, delta, R_e, sidereal_time, latitude, position):
+    
     r = [position*np.cos(delta)*np.cos(alpha),position*np.cos(delta)*np.sin(alpha),position*np.sin(delta)] #geocentric equatorial position vector of satellite
-    R = [R_e*np.cos(latitude)*np.cos(sidereal_time), R_e*np.cos(latitude)*np.sin(sidereal_time), R_e*np.sin(latitude)] #position vector of observer
+    R = [R_e*np.cos(latitude*np.pi/180)*np.cos(sidereal_time*np.pi/180), R_e*np.cos(latitude*np.pi/180)*np.sin(sidereal_time*np.pi/180), R_e*np.sin(latitude*np.pi/180)] #position vector of observer
     # print(R)
 
     rho_X = []
@@ -52,17 +59,17 @@ def geocentric_to_topocentric(alpha, delta, R_e, sidereal_time, latitude, positi
     return azimuth, elevation
 
 def geocentric_to_topocentric_matrix(latitude, sidereal_time):
-    r1 = -np.sin(sidereal_time)
-    r2 = np.cos(sidereal_time)
+    r1 = -np.sin(sidereal_time*np.pi/180)
+    r2 = np.cos(sidereal_time*np.pi/180)
     r3 = 0
 
-    r4 = -np.sin(latitude)*np.cos(sidereal_time)
-    r5 = -np.sin(latitude)*np.sin(sidereal_time)
-    r6 = np.cos(latitude)
+    r4 = -np.sin(latitude*np.pi/180)*np.cos(sidereal_time*np.pi/180)
+    r5 = -np.sin(latitude*np.pi/180)*np.sin(sidereal_time*np.pi/180)
+    r6 = np.cos(latitude*np.pi/180)
 
-    r7 = np.cos(sidereal_time)*np.cos(latitude)
-    r8 = np.cos(latitude)*np.sin(sidereal_time)
-    r9 = np.sin(latitude)
+    r7 = np.cos(sidereal_time*np.pi/180)*np.cos(latitude*np.pi/180)
+    r8 = np.cos(latitude*np.pi/180)*np.sin(sidereal_time*np.pi/180)
+    r9 = np.sin(latitude*np.pi/180)
 
     
     g_to_t = np.array([[r1,r2,r3],[r4,r5,r6],[r7,r8,r9]]) #geocentric to topocentric coordinates
