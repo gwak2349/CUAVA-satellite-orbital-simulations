@@ -96,7 +96,7 @@ def perifocal_to_eci_matrix(i, raan, argp):
     
     r4 = np.cos(raan)*np.cos(i)*np.sin(argp)+np.sin(raan)*np.cos(argp) #basically I think the error is to do with me using the transformation matrix from eci to perifocal instead of the other way around, I got some of the inputs into the matrix mixed up   
     r5 = np.cos(raan)*np.cos(i)*np.cos(argp)-np.sin(raan)*np.sin(argp) #and my brain got mixed up on how matrices (arrays) work in python
-    r6 = np.sin(i)*np.cos(argp)
+    r6 = -np.sin(i)*np.cos(argp)
 
     r7 = np.sin(i)*np.sin(argp)
     r8 = np.sin(i)*np.cos(argp)

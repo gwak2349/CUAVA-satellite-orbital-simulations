@@ -25,9 +25,14 @@ def read_tle(filename):
     line_0 = TLE[0]
     line1 = TLE[1]
     line2 = TLE[2]
+    
 
     line_1 = [x for x in line1 if x != '']
     line_2 = [x for x in line2 if x != '']
+
+    # print(line_0)
+    # print(line_1)
+    # print(line_2)
     
     tle_elements = []
 
@@ -89,13 +94,14 @@ def read_tle(filename):
     return tle_elements
 
 
-latitude = -33.91667222
-longitude = 151.033325
+latitude = -33.88795978678536
+longitude = 151.18715411842933
+
 
 
 
 R = 6371e3
-altitude = 391e3
+altitude = 424.5e3
 position = R+altitude
 
 filename = 'iss_tle.txt'
@@ -103,23 +109,23 @@ filename = 'iss_tle.txt'
 tle_elements = read_tle(filename)
 
 # print(tle_elements)
+ 
 R_e = 6778e3
 epoch_time = tle_elements[2]
 year = 2024
 month = 6
-day = 4
-UTC = 11+8/60+0/3600
+day = 19
+UTC = 6+38/60+0/3600
 
 G = 6.67*10**(-11) #Gravitational constant
 M = 5.97*10**24 #mass of the earth
 mu = G*M # standard gravitational parameter
 
-T = np.sqrt(R_e**3*4*np.pi**2/(G*M)) #period 
+T = np.sqrt(position**3*4*np.pi**2/(G*M)) #period 
 i = float(tle_elements[9])
 raan = float(tle_elements[10])
 e = float(tle_elements[11])
 argp = float(tle_elements[12])
-
 mt = 2*np.pi/T #initial mean motion
 t0 = UTC*3600
 # t1 = UTC*3600+1
@@ -132,7 +138,7 @@ v = np.sqrt(mu/a)
 h = a*v
 
 raan_i, argp_i, x_j, y_j, z_j = j2.j2_on_orbit(R, i, argp, raan, 0, t0, T,mt,h,mu,e,a,t0, t_sec)
-print(x_j, y_j, z_j)
+# print(x_j, y_j, z_j)
 
 # s = '1 25544U 98067A   24148.06162966  .00017600  00000-0  30994-3 0  9997'
 # t = '2 25544  51.6402  60.0268 0005600 240.0999 134.8837 15.50510323455278'
@@ -148,8 +154,8 @@ print(x_j, y_j, z_j)
 
 x_ecef, y_ecef, z_ecef, r, alpha, delta = ecef.eci_to_ecef(t0, t_sec, x_j, y_j, z_j)    
 
-# print(alpha)
-# print(delta)
+# print(alpha[0]*180/np.pi)
+# print(delta[0]*180/np.pi)
 
 
 
@@ -168,6 +174,7 @@ elevation_list = []
 #     delta[k] = delta[k]*180/np.pi
 
 azimuth, elevation = th.geocentric_to_topocentric(alpha, delta, R_e, sidereal_time, latitude, position)
+# azimuth, elevation = th.geocentric_to_topocentric(alpha, delta, R_e, sidereal_time, latitude, position)
 # for i in range(len(alpha)):
 #     azimuth, elevation = th.geocentric_to_topocentric(alpha[i], delta[i], R_e, sidereal_time, latitude, position)
 #     azimuth_list.append(azimuth)
@@ -175,6 +182,8 @@ azimuth, elevation = th.geocentric_to_topocentric(alpha, delta, R_e, sidereal_ti
 
 # print(azimuth*180/np.pi, elevation*180/np.pi)
 
+# print(alpha[0]*180/np.pi)
+# print(delta[0]*180/np.pi)
 print(azimuth*180/np.pi)
 print(elevation*180/np.pi)
 # print(azimuth_list)
@@ -188,3 +197,19 @@ t_sec1 = np.linspace(t1, t3, 2000)
 
 # plt.plot(t_sec1, elevation_list)
 # plt.show()
+
+angular_velocity = v/position
+angle = 160*np.pi/180
+
+time = angle/angular_velocity
+print(time)
+
+thr1 = 10
+thr2 = -10
+
+
+# time = 
+# write code to find the first elevation value above 10 and the first value to go above 170
+
+### MY CODE WWWWWWWWWWWWWWWWWWWOOOOOOOOOOOOOOOOOOOOOOOOOOOORRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRKKKKKKKKKKKKKKKKKKKKKKKKKKSSSSSSSSSSSSSSSSSSSSSSSSSSSSS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# results are good assuming no inputs from ground station to change satellite's attitude and altitude

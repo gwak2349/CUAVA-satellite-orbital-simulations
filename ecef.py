@@ -16,8 +16,8 @@ def eci_to_ecef(t_0,t_sec,x,y,z):
     for t in range(len(t_sec)):
         angle = rotation_speed*(t_sec[t]-t_0)
         angle_list.append(angle)
-        r1 = [np.cos(angle),np.sin(angle),0]
-        r2 = [-np.sin(angle),np.cos(angle),0]
+        r1 = [np.cos(angle*np.pi/180),np.sin(angle*np.pi/180),0]
+        r2 = [-np.sin(angle*np.pi/180),np.cos(angle*np.pi/180),0]
         r3 = [0,0,1]
         eci_to_ecef = np.array([r1,r2,r3])
         vector = np.array([x[t],y[t],z[t]])
@@ -49,24 +49,7 @@ def eci_to_ecef(t_0,t_sec,x,y,z):
             alpha_i = -np.arccos(l/np.cos(delta_i))
             alpha.append(alpha_i)
 
-        # position_ecef.append(p_ecef)
-    # for k in range(len(angle_list)):
-    #     angle_list[k] = angle_list[k]*180/np.pi
 
-
-    # for k in range(len(alpha)):
-    #     alpha[k] = alpha[k]*180/np.pi
-    #     delta[k] = delta[k]*180/np.pi
     
     return x_ecef, y_ecef, z_ecef, r, alpha, delta 
 
-# def convert_radec_to_longlat(alpha, delta):
-
-#     sidereal_time = alpha
-
-
-# #hour + minute/60 + second/3600 = decimal value
-#     longitude = 1
-#     latitude = delta
-
-#     return longitude, latitude

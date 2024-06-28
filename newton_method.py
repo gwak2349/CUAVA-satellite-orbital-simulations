@@ -35,5 +35,3 @@ def calculate_anomalies(t_sec, ma, e, n, T):
         theta.append(ta)
     return mean_anomaly, theta
    
-
-   

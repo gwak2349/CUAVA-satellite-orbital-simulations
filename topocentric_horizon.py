@@ -47,18 +47,32 @@ def geocentric_to_topocentric(alpha, delta, R_e, sidereal_time, latitude, positi
     A1 = np.arcsin(rho_x_hat[0]/np.cos(elevation))
     A2 = np.arccos(rho_x_hat[1]/np.cos(elevation))
 
+    print(A1*180/np.pi)
+    # print(A2*180/np.pi)
+    # if A1 > 0 and A2 > 0:
+    #     azimuth = A1
+    # elif A1 > 0 and A2 < 0:
+    #     azimuth = A1
+    # elif A1 < 0 and A2 < 0:
+    #     azimuth = -A1
+    # elif A1 < 0 and A2 > 0:
+    #     azimuth = A2
+
     if A1 > 0 and A2 > 0:
-        azimuth = A1
+        azimuth = abs(A1)
     elif A1 > 0 and A2 < 0:
-        azimuth = A1
+        azimuth = np.pi-abs(A1)
     elif A1 < 0 and A2 < 0:
-        azimuth = A1
+        azimuth = np.pi+abs(A1)
     elif A1 < 0 and A2 > 0:
-        azimuth = A2
+        azimuth = 2*np.pi-abs(A1)
+
 
     return azimuth, elevation
 
+
 def geocentric_to_topocentric_matrix(latitude, sidereal_time):
+    
     r1 = -np.sin(sidereal_time*np.pi/180)
     r2 = np.cos(sidereal_time*np.pi/180)
     r3 = 0
@@ -75,3 +89,27 @@ def geocentric_to_topocentric_matrix(latitude, sidereal_time):
     g_to_t = np.array([[r1,r2,r3],[r4,r5,r6],[r7,r8,r9]]) #geocentric to topocentric coordinates
 
     return g_to_t
+
+
+#function below utilised concepts from https://www.geeksforgeeks.org/how-to-find-the-index-for-a-given-item-in-a-python-list/
+
+def time_above_horizon(t,elevation):
+    first_match = 10*180/np.pi
+    second_match = 170*180/np.pi
+    j = 0
+    for i in range(len(elevation)):
+        if elevation[i] > first_match:
+            j = i
+            break
+
+    k = 0
+    for p in range(len(elevation)):
+        if elevation[p] > second_match:
+            k = p
+            break
+
+    t1 = t[j]
+    t2 = t[k]
+    time = t2-t1
+    
+    return time
